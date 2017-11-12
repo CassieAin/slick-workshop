@@ -9,8 +9,8 @@ case class Genre (
 )
 
 class GenreTable(tag: Tag) extends Table[Genre](tag, "genre") {
-  val id = column[Option[Long]]("id", O.PrimaryKey)
+  val id = column[Long]("id", O.PrimaryKey)
   val name = column[String]("name")
   val description = column[Option[String]]("description")
-  def * = (id, name, description)  <> ((Genre.apply _).tupled, Genre.unapply)
+  def * = (id.?, name, description)  <> ((Genre.apply _).tupled, Genre.unapply)
 }
