@@ -16,3 +16,7 @@ class StaffTable(tag: Tag) extends Table[Staff](tag, "staff") {
   val age = column[Int]("age")
   def * = (id.?, name, rate, age)  <> ((Staff.apply _).tupled, Staff.unapply)
 }
+
+object StaffTable{
+  val table = TableQuery[StaffTable]
+}

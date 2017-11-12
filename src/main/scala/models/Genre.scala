@@ -14,3 +14,7 @@ class GenreTable(tag: Tag) extends Table[Genre](tag, "genre") {
   val description = column[Option[String]]("description")
   def * = (id.?, name, description)  <> ((Genre.apply _).tupled, Genre.unapply)
 }
+
+object GenreTable{
+  val table = TableQuery[GenreTable]
+}

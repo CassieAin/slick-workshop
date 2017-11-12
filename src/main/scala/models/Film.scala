@@ -23,6 +23,10 @@ class FilmTable(tag: Tag) extends Table[Film](tag, "film") {
   def * = (id.?, title, duration, directorId, rating) <> (Film.apply _ tupled, Film.unapply)
 }
 
+object FilmTable{
+  val table = TableQuery[FilmTable]
+}
+
 case class FilmToGenre(
   id:  Option[Long],
   filmFk: Long,
@@ -38,6 +42,10 @@ class FilmToGenreTable(tag: Tag) extends Table[FilmToGenre](tag, "film_to_genre"
   val genreIdFk = foreignKey("genre_id_fk", genreId, TableQuery[GenreTable])(_.id)
 
   def * = (id.?, filmId, genreId) <> (FilmToGenre.apply _ tupled, FilmToGenre.unapply)
+}
+
+object FilmToGenreTable{
+  val table = TableQuery[FilmToGenreTable]
 }
 
 case class FilmToCast(
@@ -57,6 +65,10 @@ class FilmToCastTable(tag: Tag) extends Table[FilmToCast](tag, "film_to_cast") {
   def * = (id.?, filmId, staffId) <> (FilmToCast.apply _ tupled, FilmToCast.unapply)
 }
 
+object FilmToCastTable{
+  val table = TableQuery[FilmToCastTable]
+}
+
 case class FilmToCountry(
   id: Option[Long],
   filmFk: Long,
@@ -72,4 +84,8 @@ class FilmToCountryTable(tag: Tag) extends Table[FilmToCountry](tag, "film_to_co
   val countryIdFk = foreignKey("country_id_fk", countryId, TableQuery[CountryTable])(_.id)
 
   def * = (id.?, filmId, countryId) <> (FilmToCountry.apply _ tupled, FilmToCountry.unapply)
+}
+
+object FilmToCountryTable{
+  val table = TableQuery[FilmToCountryTable]
 }
