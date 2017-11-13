@@ -2,8 +2,8 @@ package models
 
 import scala.concurrent.duration.Duration
 import slick.jdbc.PostgresProfile.api._
-
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 case class Film (
   id: Option[Long],
@@ -32,8 +32,18 @@ object FilmTable{
 class FilmRepository(db: Database) {
   val filmTableQuery = TableQuery[FilmTable]
 
-  def create(film: Film): Future[Film] =
-    db.run(filmTableQuery returning filmTableQuery += film)
+  def create(film: Film, genreIds: List[Long], actorIds: List[Long], countryIds: List[Long]): Future[Film] = {
+    val query =
+      (FilmTable.table returning FilmTable.table += film).flatMap{film =>
+        (FilmToGenreTable.table ++= genreIds.map(genreId => FilmToGenre(None, film.id.get, genreId))).andThen(
+          (FilmToCountryTable.table ++= countryIds.map(countryId => FilmToCountry(None, film.id.get, countryId))).andThen(
+            FilmToCastTable.table ++= actorIds.map(actorId => FilmToCast(None, film.id.get, actorId))
+          )
+        ).andThen(DBIO.successful(film))
+      }
+    db.run(query)
+  }
+
 
   def update(film: Film): Future[Int] =
     db.run(filmTableQuery.filter(_.id === film.id).update(film))
@@ -41,10 +51,29 @@ class FilmRepository(db: Database) {
   def delete(film: Film): Future[Int] =
     db.run(filmTableQuery.filter(_.id === film.id).delete)
 
-  def getById(film: Film): Future[Option[Film]] =
-    db.run(filmTableQuery.filter(_.id === film.id).result.headOption)
-}
+  def getById(filmId: Long): Future[(Film, Seq[Genre], Seq[Country], Seq[Staff])] = {
+    val query = for{
+      film <- FilmTable.table.filter(_.id === filmId).result.head
+      genres <- GenreTable.table.filter(_.id in(
+        FilmToGenreTable.table.filter(_.filmId === filmId).map(_.genreId))
+      ).result
+      countries <- CountryTable.table.filter(_.id in(
+        FilmToCountryTable.table.filter(_.filmId === filmId).map(_.countryId))
+      ).result
+      actors <- StaffTable.table.filter(_.id in(
+        FilmToCastTable.table.filter(_.filmId === filmId).map(_.staffId))
+      ).result
+    } yield(film, genres, countries, actors)
+    db.run(query)
+  }
 
+  def getFilmWithDirector(filmId: Long): Future[(Film, Staff)] = {
+    val query = FilmTable.table join StaffTable.table on (_.directorId === _.id)
+    db.run{
+      query.result.head
+    }
+  }
+}
 
 case class FilmToGenre(
   id:  Option[Long],
