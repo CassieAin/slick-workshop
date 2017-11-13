@@ -77,8 +77,8 @@ class FilmRepository(db: Database) {
 
 case class FilmToGenre(
   id:  Option[Long],
-  filmFk: Long,
-  genreFk: Long
+  filmId: Long,
+  genreId: Long
 )
 
 class FilmToGenreTable(tag: Tag) extends Table[FilmToGenre](tag, "film_to_genre") {
@@ -95,14 +95,6 @@ class FilmToGenreTable(tag: Tag) extends Table[FilmToGenre](tag, "film_to_genre"
 object FilmToGenreTable{
   val table = TableQuery[FilmToGenreTable]
 }
-
-class FilmToGenreRepository(db: Database) {
-  val filmToGenreTableQuery = TableQuery[FilmToGenreTable]
-
-  def create(film: FilmToGenre): Future[FilmToGenre] =
-    db.run(filmToGenreTableQuery returning filmToGenreTableQuery += film)
-}
-
 
 case class FilmToCast(
    id:  Option[Long],
@@ -125,13 +117,6 @@ object FilmToCastTable{
   val table = TableQuery[FilmToCastTable]
 }
 
-class FilmToCastRepository(db: Database) {
-  val filmToCastTableQuery = TableQuery[FilmToCastTable]
-
-  def create(film: FilmToCast): Future[FilmToCast] =
-    db.run(filmToCastTableQuery returning filmToCastTableQuery += film)
-}
-
 case class FilmToCountry(
   id: Option[Long],
   filmFk: Long,
@@ -151,11 +136,4 @@ class FilmToCountryTable(tag: Tag) extends Table[FilmToCountry](tag, "film_to_co
 
 object FilmToCountryTable{
   val table = TableQuery[FilmToCountryTable]
-}
-
-class FilmToCountryRepository(db: Database) {
-  val filmToCountryTableQuery = TableQuery[FilmToCountryTable]
-
-  def create(film: FilmToCountry): Future[FilmToCountry] =
-    db.run(filmToCountryTableQuery returning filmToCountryTableQuery += film)
 }
