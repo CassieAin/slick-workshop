@@ -1,5 +1,6 @@
+import model._
 import slick.jdbc.PostgresProfile.api._
-import models._
+
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
@@ -12,8 +13,8 @@ object Main{
   val filmRepository = new FilmRepository(db)
 
   def main(args: Array[String]): Unit = {
-    init()
-    databaseFill()
+    //init()
+    //databaseFill()
   }
 
   def init(): Unit = {
