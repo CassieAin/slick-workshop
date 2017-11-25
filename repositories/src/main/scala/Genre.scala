@@ -1,4 +1,4 @@
-import model.Genre
+import model._
 
 import scala.concurrent.Future
 import slick.jdbc.PostgresProfile.api._

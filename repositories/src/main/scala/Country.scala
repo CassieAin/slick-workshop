@@ -1,5 +1,4 @@
-import model.Country
-
+import model._
 import scala.concurrent.Future
 import slick.jdbc.PostgresProfile.api._
 

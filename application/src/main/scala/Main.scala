@@ -1,4 +1,4 @@
-import model.{Country, Film, Genre, Staff}
+import model._
 import slick.jdbc.PostgresProfile.api._
 
 import scala.concurrent.Await

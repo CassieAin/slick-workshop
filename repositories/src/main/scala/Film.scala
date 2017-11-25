@@ -1,5 +1,5 @@
-import model.{Film, FilmToCast, FilmToCountry, FilmToGenre}
-import impicits._
+import model._
+import implicits._
 import scala.concurrent.Future
 import scala.concurrent.duration.Duration
 import slick.jdbc.PostgresProfile.api._
